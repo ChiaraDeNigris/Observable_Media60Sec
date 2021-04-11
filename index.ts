@@ -1,27 +1,27 @@
 import { ajax } from "rxjs/ajax";
 import { Observable, interval } from "rxjs";
 
-const apiKey = "223e36e264fd262c0dd5e26c63edf39f";
+const apiKey = "d32186b009af06ebb1a0470a906835d5";
 const URL =
   "https://api.openweathermap.org/data/2.5/weather?APPID=" +
   apiKey +
   "&units=metric&q=";
-var city = "Pisa";
+var cityElems = document.getElementsByClassName("citta");
+console.log(cityElems);
 const tick = interval(100);
-var t1 = 0;
+
 //Costruisco l'observable
 const temp = new Observable(subscriber =>
   tick.subscribe({
     next(n) {
-      fetch(URL + city)
-        .then(response => response.json())
-        .then(data => {
-          var t = data.main.temp;
-          if (t != t1) {
+      for (var city in cityElems) {
+        
+        fetch(URL + city.innerHTML)
+          .then(response => response.json())
+          .then(data => {
             subscriber.next(data.main.temp);
-            t1 = t;
-          }
-        });
+          });
+      }
     }
   })
 );
@@ -34,6 +34,10 @@ temp.subscribe({
 });
 temp.subscribe({
   next(x) {
-    document.getElementById("output").innerHTML += x + "<br>";
+    var media = 0;
+    for (city in cityElems) {
+      media += x / cityElems.length;
+    }
+    document.getElementById("output").innerHTML += media + "<br>";
   }
 });
